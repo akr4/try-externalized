@@ -1,0 +1,45 @@
+apply plugin: "scala"
+apply plugin: "application"
+
+mainClassName = "test.Server"
+
+ext {
+  scalaBinaryVersion = "2.10"
+}
+
+repositories {
+  mavenCentral()
+  mavenLocal()
+  maven { url "http://akr4.github.com/mvn-repo/releases/" }
+  maven { url "http://repo.typesafe.com/typesafe/releases/" }
+}
+
+configurations {
+  all*.exclude group: "commons-logging", module: "commons-logging"
+}
+
+dependencies {
+  compile "org.scala-lang:scala-library:2.10.2"
+
+  compile "net.databinder:unfiltered-netty-server_$scalaBinaryVersion:0.7.0"
+  compile "net.databinder:unfiltered-json4s_$scalaBinaryVersion:0.7.0"
+  compile "net.databinder:unfiltered-netty-uploads_$scalaBinaryVersion:0.7.0"
+  compile "net.databinder:unfiltered-directives_$scalaBinaryVersion:0.7.0"
+
+  compile "com.github.cb372:externalized:0.3.0"
+  compile "commons-io:commons-io:2.4"
+}
+
+tasks.withType(ScalaCompile) {
+  scalaCompileOptions.useAnt = false
+}
+
+task start(dependsOn: "compileScala", type: JavaExec) {
+  main = "test.Server"
+  classpath = sourceSets.main.runtimeClasspath
+}
+
+task classpath << {
+  println(sourceSets.main.runtimeClasspath.asPath)
+}
+
